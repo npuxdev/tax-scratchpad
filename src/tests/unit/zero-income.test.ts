@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { calculateFederal2025 } from '../../tax/2025/calculate'
 import { STANDARD_DEDUCTION } from '../../tax/2025/constants'
 import { createEmptyScenario } from '../../state/scenario'
+import { money } from '../../tax/money'
 
 describe('zero-income empty scenario', () => {
   it('shows $0 tax and nothing due for a single return with no income', () => {
@@ -18,7 +19,10 @@ describe('zero-income empty scenario', () => {
     expect(result.totals.refundOrDue).toBe(0)
     expect(result.forms.form1040['16']).toBe(0)
     expect(result.forms.form1040['24']).toBe(0)
+    expect(result.forms.form1040['34']).toBe(0)
     expect(result.forms.form1040['37']).toBe(0)
+    // Tax-table $0–$50 midpoint must never leak into an empty return.
+    expect(result.totals.incomeTax).not.toBe(money.fromDollars(3))
   })
 
   it('shows $0 tax for an empty married-filing-jointly return', () => {

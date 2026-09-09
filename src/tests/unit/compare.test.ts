@@ -4,6 +4,7 @@ import {
   comparisonDownloadName,
   exportComparisonJson,
   formatComparisonValue,
+  formatOutcomeDelta,
 } from '../../comparison/compare'
 import { createExampleReturn } from '../../fixtures/example-return'
 import { createEmptyScenario, createFormInstance, duplicateScenario } from '../../state/scenario'
@@ -210,5 +211,36 @@ describe('compareScenarios', () => {
     expect(formatted.startsWith('+') || formatted.startsWith('-') || formatted.startsWith('$')).toBe(
       true,
     )
+  })
+})
+
+describe('formatOutcomeDelta', () => {
+  it('describes less due, more due, larger refund, and smaller refund', () => {
+    expect(formatOutcomeDelta(money.fromDollars(-1000), money.fromDollars(-745))).toBe(
+      '$255 less due',
+    )
+    expect(formatOutcomeDelta(money.fromDollars(-500), money.fromDollars(-680))).toBe(
+      '$180 more due',
+    )
+    expect(formatOutcomeDelta(money.fromDollars(1000), money.fromDollars(1420))).toBe(
+      '$420 larger refund',
+    )
+    expect(formatOutcomeDelta(money.fromDollars(1000), money.fromDollars(580))).toBe(
+      '$420 smaller refund',
+    )
+  })
+
+  it('describes sign changes against baseline', () => {
+    expect(formatOutcomeDelta(money.fromDollars(-200), money.fromDollars(150))).toBe(
+      'now a $150 refund',
+    )
+    expect(formatOutcomeDelta(money.fromDollars(200), money.fromDollars(-150))).toBe(
+      'now $150 due',
+    )
+    expect(formatOutcomeDelta(money.fromDollars(-200), 0)).toBe('now $0')
+  })
+
+  it('returns null when amounts match', () => {
+    expect(formatOutcomeDelta(100, 100)).toBeNull()
   })
 })

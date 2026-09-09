@@ -16,6 +16,7 @@ export function Form1099Nec({ form, setValue }: InputRendererProps) {
     <FormFrame title="Form 1099-NEC" meta="Nonemployee Compensation · 2025">
       <FormSection>
         <TextLine
+          fieldId="payerName"
           label="Payer name"
           value={textOf(form, 'payerName')}
           onCommit={(v) => setValue('payerName', v)}
@@ -30,12 +31,14 @@ export function Form1099Nec({ form, setValue }: InputRendererProps) {
       </FormSection>
       <FormSection title="Boxes">
         <MoneyLine
+          fieldId="box1"
           no="1"
           label="Nonemployee compensation"
           value={centsOf(form, 'box1')}
           onCommit={(v) => setValue('box1', v)}
         />
         <MoneyLine
+          fieldId="box4"
           no="4"
           label="Federal income tax withheld"
           value={centsOf(form, 'box4')}

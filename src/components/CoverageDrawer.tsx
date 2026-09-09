@@ -25,12 +25,12 @@ export function CoverageDrawer() {
       lightDismiss
       closeLabel="Close"
     >
-      <DrawerTitle>Projection coverage</DrawerTitle>
+      <DrawerTitle>Calculation coverage</DrawerTitle>
       <DrawerBody>
         {status === 'exact' && issues.length === 0 ? (
-          <Empty title="Fully covered">
-            Every entered value is supported by the 2025 rule set. The projection
-            is exact.
+          <Empty title="Calculation complete">
+            All populated fields are supported by the 2025 federal calculation
+            model.
           </Empty>
         ) : (
           <>

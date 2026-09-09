@@ -25,9 +25,10 @@ export function EmptyState() {
             </div>
           }
         >
-          Build a hypothetical federal tax scenario. Nothing leaves this browser.
+          Change a tax assumption and see exactly what changes.
         </Empty>
         <p className="disclaimer" style={{ marginTop: 24 }}>
+          Build a hypothetical federal tax scenario. Nothing leaves this browser.{' '}
           {DISCLAIMER} <strong>{STORAGE_NOTE}</strong>
         </p>
         <button

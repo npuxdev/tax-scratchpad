@@ -20,35 +20,35 @@ export function Form1040({ scenario, calculation, onTrace }: Form1040Props) {
           no="9"
           label="Total income"
           value={t?.income ?? null}
-          nodeId="1040.9"
+          nodeId="form1040:9"
           onTrace={onTrace}
         />
         <DerivedLine
           no="10"
           label="Adjustments to income"
           value={t?.adjustments ?? null}
-          nodeId="1040.10"
+          nodeId="form1040:10"
           onTrace={onTrace}
         />
         <DerivedLine
           no="11"
           label="Adjusted gross income"
           value={t?.agi ?? null}
-          nodeId="1040.11"
+          nodeId="form1040:11"
           onTrace={onTrace}
         />
         <DerivedLine
           no="12"
           label={`Deduction (${deductionType})`}
           value={t?.deductions ?? null}
-          nodeId="1040.12"
+          nodeId="form1040:12"
           onTrace={onTrace}
         />
         <DerivedLine
           no="15"
           label="Taxable income"
           value={t?.taxableIncome ?? null}
-          nodeId="1040.15"
+          nodeId="form1040:15"
           onTrace={onTrace}
         />
       </FormSection>
@@ -58,14 +58,14 @@ export function Form1040({ scenario, calculation, onTrace }: Form1040Props) {
           no="16"
           label="Tax"
           value={t?.incomeTax ?? null}
-          nodeId="1040.16"
+          nodeId="form1040:line16"
           onTrace={onTrace}
         />
         <DerivedLine
           no="19"
           label="Child tax credit / credit for other dependents"
           value={t?.nonrefundableCredits ?? null}
-          nodeId="1040.19"
+          nodeId="schedule8812:nonrefundable"
           onTrace={onTrace}
         />
         <DerivedLine
@@ -74,14 +74,14 @@ export function Form1040({ scenario, calculation, onTrace }: Form1040Props) {
           value={
             t ? t.selfEmploymentTax + t.additionalMedicareTax : null
           }
-          nodeId="1040.23"
+          nodeId="form1040:23"
           onTrace={onTrace}
         />
         <DerivedLine
           no="24"
           label="Total tax"
           value={t?.totalTax ?? null}
-          nodeId="1040.24"
+          nodeId="form1040:24"
           onTrace={onTrace}
         />
       </FormSection>
@@ -91,21 +91,21 @@ export function Form1040({ scenario, calculation, onTrace }: Form1040Props) {
           no="25"
           label="Federal income tax withheld"
           value={t?.withholding ?? null}
-          nodeId="1040.25"
+          nodeId="form1040:25"
           onTrace={onTrace}
         />
         <DerivedLine
           no="26"
           label="Estimated tax payments"
           value={t?.estimatedPayments ?? null}
-          nodeId="1040.26"
+          nodeId="form1040:26"
           onTrace={onTrace}
         />
         <DerivedLine
           no="33"
           label="Total payments"
           value={t?.totalPayments ?? null}
-          nodeId="1040.33"
+          nodeId="form1040:33"
           onTrace={onTrace}
         />
       </FormSection>
@@ -114,10 +114,14 @@ export function Form1040({ scenario, calculation, onTrace }: Form1040Props) {
         <DerivedLine
           no="34/37"
           label={
-            (t?.refundOrDue ?? 0) >= 0 ? 'Refund' : 'Amount you owe'
+            !t || t.refundOrDue === 0
+              ? 'Refund or amount you owe'
+              : t.refundOrDue > 0
+                ? 'Refund'
+                : 'Amount you owe'
           }
           value={t ? Math.abs(t.refundOrDue) : null}
-          nodeId="1040.refundOrDue"
+          nodeId="form1040:34"
           onTrace={onTrace}
         />
       </FormSection>

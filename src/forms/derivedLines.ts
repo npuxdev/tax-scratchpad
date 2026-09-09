@@ -137,6 +137,13 @@ const DERIVED_LINES: Record<string, Record<string, DerivedLineMeta>> = {
     },
   },
   schedule1: {
+    '3': {
+      no: '3',
+      label: 'Business income (Schedule C)',
+      dataType: 'money',
+      nodeId: 'schedule1:3',
+      destination: 'Form 1040 · 9',
+    },
     '15': {
       no: '15',
       label: 'Deductible part of self-employment tax',

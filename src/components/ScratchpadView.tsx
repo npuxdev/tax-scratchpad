@@ -9,7 +9,14 @@ import { parseFieldValue, toEditableString } from '../forms/fieldEditing'
 import type { ScratchRow } from './ScratchpadRow'
 
 export function ScratchpadView() {
-  const { activeScenario, calculation, selectedFormId, dispatch } = useAppStore()
+  const {
+    activeScenario,
+    calculation,
+    selectedFormId,
+    selectedFieldId,
+    setSelectedFieldId,
+    dispatch,
+  } = useAppStore()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
@@ -26,12 +33,36 @@ export function ScratchpadView() {
 
   const flat = model.flat
 
-  // Reset traversal when the selected form changes.
+  // Reset traversal when the selected form changes — unless a field target is pending.
   useEffect(() => {
+    if (selectedFieldId) return
     setSelectedIndex(0)
     setEditing(false)
     setEditError(null)
-  }, [selectedFormId])
+  }, [selectedFormId, selectedFieldId])
+
+  // Honor command-palette / duplicate field selection.
+  useEffect(() => {
+    if (!selectedFieldId) return
+    const index = flat.findIndex((row) => row.fieldId === selectedFieldId)
+    if (index < 0) return
+    setSelectedIndex(index)
+    setEditError(null)
+    const row = flat[index]
+    requestAnimationFrame(() => {
+      const el = rowRefs.current[index]
+      el?.focus()
+      el?.scrollIntoView({ block: 'nearest' })
+      if (row?.editable && row.dataType !== 'boolean') {
+        setEditValue(toEditableString(row.value, row.dataType))
+        setEditing(true)
+      } else {
+        setEditing(false)
+      }
+    })
+    // Intentionally omit `flat` — value updates must not re-trigger edit mode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFieldId, selectedFormId])
 
   const registerRef = useCallback((index: number, el: HTMLDivElement | null) => {
     rowRefs.current[index] = el
@@ -60,11 +91,12 @@ export function ScratchpadView() {
         return
       }
       setSelectedIndex(index)
+      setSelectedFieldId(row.fieldId)
       setEditValue(toEditableString(row.value, row.dataType))
       setEditError(null)
       setEditing(true)
     },
-    [dispatch, flat],
+    [dispatch, flat, setSelectedFieldId],
   )
 
   const commit = useCallback(
@@ -193,6 +225,8 @@ export function ScratchpadView() {
           registerRef={registerRef}
           onSelect={(i) => {
             setSelectedIndex(i)
+            const row = flat[i]
+            if (row) setSelectedFieldId(row.fieldId)
             focusRow(i)
           }}
           onStartEdit={startEdit}

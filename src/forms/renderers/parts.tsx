@@ -45,11 +45,13 @@ export function MoneyLine({
   label,
   value,
   onCommit,
+  fieldId,
 }: {
   no?: string
   label: string
   value: Cents
   onCommit: (cents: Cents) => void
+  fieldId?: string
 }) {
   const [draft, setDraft] = useState(String(money.toDollars(value)))
   useEffect(() => setDraft(String(money.toDollars(value))), [value])
@@ -58,7 +60,7 @@ export function MoneyLine({
     onCommit(cents ?? money.zero)
   }
   return (
-    <div className="tax-line">
+    <div className="tax-line" data-field-id={fieldId}>
       <span className="tax-line__no">{no ?? ''}</span>
       <span className="tax-line__label">{label}</span>
       <span className="tax-line__value">
@@ -83,14 +85,16 @@ export function TextLine({
   label,
   value,
   onCommit,
+  fieldId,
 }: {
   no?: string
   label: string
   value: string
   onCommit: (value: string) => void
+  fieldId?: string
 }) {
   return (
-    <div className="tax-line">
+    <div className="tax-line" data-field-id={fieldId}>
       <span className="tax-line__no">{no ?? ''}</span>
       <span className="tax-line__label">{label}</span>
       <span className="tax-line__value">
@@ -110,14 +114,16 @@ export function BooleanLine({
   label,
   value,
   onCommit,
+  fieldId,
 }: {
   no?: string
   label: string
   value: boolean
   onCommit: (value: boolean) => void
+  fieldId?: string
 }) {
   return (
-    <div className="tax-line">
+    <div className="tax-line" data-field-id={fieldId}>
       <span className="tax-line__no">{no ?? ''}</span>
       <span className="tax-line__label">{label}</span>
       <span className="tax-line__value">

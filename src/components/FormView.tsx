@@ -1,4 +1,4 @@
-import { Empty } from '@noorddev/vlak-react'
+import { useEffect } from 'react'
 import { useAppStore } from '../state/AppStore'
 import { useUiState } from '../app/UiState'
 import { BASICS_SELECTION } from '../app/packet'
@@ -16,9 +16,42 @@ import { Schedule2 } from '../forms/renderers/Schedule2'
 import { ScheduleSE } from '../forms/renderers/ScheduleSE'
 import { Schedule8812 } from '../forms/renderers/Schedule8812'
 
+/** Scroll/highlight/focus a form field selected via the command palette. */
+function useFormFieldFocus(fieldId: string | null) {
+  useEffect(() => {
+    if (!fieldId) return
+    let timer: number | undefined
+    const frame = requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>(
+        `[data-field-id="${CSS.escape(fieldId)}"]`,
+      )
+      if (!el) return
+      el.classList.add('tax-line--focused')
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+      const input = el.querySelector<HTMLElement>('input, textarea, button')
+      input?.focus()
+      timer = window.setTimeout(() => {
+        el.classList.remove('tax-line--focused')
+      }, 1600)
+    })
+    return () => {
+      cancelAnimationFrame(frame)
+      if (timer !== undefined) window.clearTimeout(timer)
+    }
+  }, [fieldId])
+}
+
 export function FormView() {
-  const { activeScenario, calculation, selectedFormId, dispatch } = useAppStore()
+  const {
+    activeScenario,
+    calculation,
+    selectedFormId,
+    selectedFieldId,
+    dispatch,
+  } = useAppStore()
   const { openTrace } = useUiState()
+
+  useFormFieldFocus(selectedFieldId)
 
   if (!activeScenario) return null
 
@@ -52,10 +85,14 @@ export function FormView() {
 
   const form = activeScenario.forms.find((f) => f.id === selectedFormId)
   if (!form) {
+    // Null/unknown selection: show Form 1040 rather than an empty dead-end.
+    // Do not write selectedFormId — Scratchpad still treats null as “all inputs”.
     return (
-      <Empty title="No form selected">
-        Choose a form from the packet, or open a calculated form to see its lines.
-      </Empty>
+      <Form1040
+        scenario={activeScenario}
+        calculation={calculation}
+        onTrace={openTrace}
+      />
     )
   }
 

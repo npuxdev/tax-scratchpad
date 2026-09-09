@@ -13,8 +13,14 @@ function Hint({ id }: { id: ShortcutId }) {
 }
 
 export function CommandPalette() {
-  const { activeScenario, calculation, setSelectedFormId, setMainView } =
-    useAppStore()
+  const {
+    activeScenario,
+    calculation,
+    mainView,
+    setSelectedFormId,
+    setMainView,
+    selectFormField,
+  } = useAppStore()
   const { commandOpen, setCommandOpen } = useUiState()
   const {
     addForm,
@@ -42,6 +48,15 @@ export function CommandPalette() {
       setCommandOpen(false)
     }
 
+    const jumpToField = (formId: string, fieldId: string) => {
+      selectFormField(formId, fieldId)
+      // Stay on the current working plane so Scratchpad↔Form context is preserved.
+      if (mainView !== 'scratchpad' && mainView !== 'form') {
+        setMainView('scratchpad')
+      }
+      setCommandOpen(false)
+    }
+
     const run = (action: () => void) => {
       setCommandOpen(false)
       action()
@@ -63,7 +78,7 @@ export function CommandPalette() {
         label: `${form.label}: ${field.label}`,
         keywords: `${form.label} ${field.label} ${field.box ?? ''}`,
         hint: field.box ? `Box ${field.box}` : undefined,
-        onSelect: () => jumpTo(form.id, 'scratchpad'),
+        onSelect: () => jumpToField(form.id, field.id),
       }))
     })
 
@@ -165,9 +180,11 @@ export function CommandPalette() {
     goScratchpad,
     importJson,
     loadDemo,
+    mainView,
     openShortcuts,
     requestDelete,
     requestReset,
+    selectFormField,
     setCommandOpen,
     setMainView,
     setSelectedFormId,

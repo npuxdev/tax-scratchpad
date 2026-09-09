@@ -95,13 +95,25 @@ export function calculateFederal2025(scenario: TaxScenario): Federal2025Result {
   const scheduleC = computeAllScheduleC(scenario, graph)
   const se = computeScheduleSE(scheduleC.totalNet, w2SocialSecurityWages, graph)
 
+  // ── Schedule 1 business income → Form 1040 total income ─────────────────────
+  const businessIncome = scheduleC.totalNet
+  addNode(graph, {
+    id: 'schedule1:3',
+    label: 'Business income (Schedule C)',
+    value: businessIncome,
+    kind: 'sum',
+    inputs: scheduleC.results.map((r) => r.netProfitNodeId),
+    destination: { form: 'Schedule 1', line: '3' },
+    rule: 'Sum of Schedule C net profit or (loss)',
+  })
+
   // ── Total income & AGI ───────────────────────────────────────────────────────
   const totalIncome = money.add(
     wages,
     interest,
     ordinaryDividends,
     capitalGainDistributions,
-    scheduleC.totalNet,
+    businessIncome,
   )
   addNode(graph, {
     id: 'form1040:9',
@@ -113,7 +125,7 @@ export function calculateFederal2025(scenario: TaxScenario): Federal2025Result {
       'form1040:2b',
       'form1040:3b',
       'form1040:7',
-      ...scheduleC.results.map((r) => r.netProfitNodeId),
+      'schedule1:3',
     ],
     destination: { form: 'Form 1040', line: '9' },
   })
@@ -306,6 +318,15 @@ export function calculateFederal2025(scenario: TaxScenario): Federal2025Result {
   })
 
   const estimatedPayments = scenario.estimatedPayments
+  addNode(graph, {
+    id: 'form1040:26',
+    label: 'Estimated tax payments',
+    value: estimatedPayments,
+    kind: 'input',
+    inputs: [],
+    destination: { form: 'Form 1040', line: '26' },
+  })
+
   const refundableCredits = credit8812.additionalChildTaxCredit
   const totalPayments = money.add(withholding, estimatedPayments, refundableCredits)
   addNode(graph, {
@@ -313,11 +334,15 @@ export function calculateFederal2025(scenario: TaxScenario): Federal2025Result {
     label: 'Total payments',
     value: totalPayments,
     kind: 'sum',
-    inputs: ['form1040:25', credit8812.refundableNodeId],
+    inputs: ['form1040:25', 'form1040:26', credit8812.refundableNodeId],
     destination: { form: 'Form 1040', line: '33' },
     children: [
-      { label: 'Withholding', value: withholding },
-      { label: 'Estimated payments', value: estimatedPayments },
+      { label: 'Withholding', value: withholding, nodeId: 'form1040:25' },
+      {
+        label: 'Estimated payments',
+        value: estimatedPayments,
+        nodeId: 'form1040:26',
+      },
       { label: 'Refundable ACTC', value: refundableCredits },
     ],
   })
@@ -386,6 +411,7 @@ export function calculateFederal2025(scenario: TaxScenario): Federal2025Result {
       '37': refundOrDue < 0 ? -refundOrDue : money.zero,
     },
     schedule1: {
+      '3': businessIncome,
       '15': se.deductibleHalf,
       '25': adjustments,
     },

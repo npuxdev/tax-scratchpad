@@ -44,6 +44,9 @@ interface AppStoreValue {
   calculation: Federal2025Result | null
   selectedFormId: string | null
   setSelectedFormId: (id: string | null) => void
+  selectedFieldId: string | null
+  setSelectedFieldId: (id: string | null) => void
+  selectFormField: (formId: string, fieldId: string) => void
   mainView: MainView
   setMainView: (view: MainView) => void
   dispatch: (action: ScenarioAction) => void
@@ -82,9 +85,21 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false)
   const [scenarios, setScenarios] = useState<TaxScenario[]>([])
   const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null)
-  const [selectedFormId, setSelectedFormId] = useState<string | null>(null)
+  const [selectedFormId, setSelectedFormIdState] = useState<string | null>(null)
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null)
   const [mainView, setMainView] = useState<MainView>('scratchpad')
   const persist = useDebouncedPersist()
+
+  const setSelectedFormId = useCallback((id: string | null) => {
+    setSelectedFormIdState(id)
+    setSelectedFieldId(null)
+  }, [])
+
+  /** Navigate to a form and focus a specific field (command palette). */
+  const selectFormField = useCallback((formId: string, fieldId: string) => {
+    setSelectedFormIdState(formId)
+    setSelectedFieldId(fieldId)
+  }, [])
 
   const activeScenario = useMemo(
     () => scenarios.find((s) => s.id === activeScenarioId) ?? null,
@@ -172,7 +187,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       setMainView('scratchpad')
       await rememberActive(scenario.id)
     },
-    [rememberActive],
+    [rememberActive, setSelectedFormId],
   )
 
   const deleteScenarioFn = useCallback(
@@ -189,7 +204,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         return next
       })
     },
-    [activeScenarioId, rememberActive],
+    [activeScenarioId, rememberActive, setSelectedFormId],
   )
 
   const duplicateScenarioFn = useCallback(
@@ -201,10 +216,29 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       await putScenario(copy)
       setScenarios((prev) => [copy, ...prev])
       setActiveScenarioId(copy.id)
-      setSelectedFormId(null)
+
+      // Preserve equivalent form/field selection when duplicating the active scenario.
+      if (sourceId === activeScenarioId && selectedFormId) {
+        if (
+          selectedFormId === 'basics' ||
+          selectedFormId.startsWith('calc:')
+        ) {
+          setSelectedFormIdState(selectedFormId)
+        } else {
+          const idx = source.forms.findIndex((f) => f.id === selectedFormId)
+          const mapped = idx >= 0 ? (copy.forms[idx]?.id ?? null) : null
+          setSelectedFormIdState(mapped)
+          if (!mapped) setSelectedFieldId(null)
+        }
+        // field ids are stable across copies; keep selectedFieldId as-is
+      } else {
+        setSelectedFormIdState(null)
+        setSelectedFieldId(null)
+      }
+
       await rememberActive(copy.id)
     },
-    [activeScenarioId, rememberActive, scenarios],
+    [activeScenarioId, rememberActive, scenarios, selectedFormId],
   )
 
   const switchScenario = useCallback(
@@ -215,7 +249,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       setMainView('scratchpad')
       await rememberActive(id)
     },
-    [rememberActive, scenarios],
+    [rememberActive, scenarios, setSelectedFormId],
   )
 
   const importScenario = useCallback(
@@ -227,7 +261,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       setSelectedFormId(null)
       await rememberActive(scenario.id)
     },
-    [rememberActive],
+    [rememberActive, setSelectedFormId],
   )
 
   const exportActiveScenario = useCallback(() => {
@@ -242,7 +276,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setSelectedFormId(null)
     setMainView('scratchpad')
     await putScenario(next)
-  }, [activeScenario, updateScenarioInList])
+  }, [activeScenario, updateScenarioInList, setSelectedFormId])
 
   const loadDemoScenario = useCallback(async () => {
     const demo = createDemoScenario()
@@ -252,7 +286,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setSelectedFormId(null)
     setMainView('scratchpad')
     await rememberActive(demo.id)
-  }, [rememberActive])
+  }, [rememberActive, setSelectedFormId])
 
   const value = useMemo<AppStoreValue>(
     () => ({
@@ -263,6 +297,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       calculation,
       selectedFormId,
       setSelectedFormId,
+      selectedFieldId,
+      setSelectedFieldId,
+      selectFormField,
       mainView,
       setMainView,
       dispatch,
@@ -282,6 +319,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       activeScenario,
       calculation,
       selectedFormId,
+      setSelectedFormId,
+      selectedFieldId,
+      selectFormField,
       mainView,
       dispatch,
       createScenario,

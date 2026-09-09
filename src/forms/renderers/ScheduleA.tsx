@@ -14,18 +14,21 @@ export function ScheduleA({ form, setValue, calculation, onTrace }: ScheduleAPro
     <FormFrame title="Schedule A" meta="Itemized Deductions · 2025">
       <FormSection title="Taxes you paid">
         <MoneyLine
+          fieldId="stateLocalIncomeTax"
           no="5a"
           label="State and local income taxes"
           value={centsOf(form, 'stateLocalIncomeTax')}
           onCommit={(v) => setValue('stateLocalIncomeTax', v)}
         />
         <MoneyLine
+          fieldId="realEstateTax"
           no="5b"
           label="Real estate taxes"
           value={centsOf(form, 'realEstateTax')}
           onCommit={(v) => setValue('realEstateTax', v)}
         />
         <MoneyLine
+          fieldId="personalPropertyTax"
           no="5c"
           label="Personal property taxes"
           value={centsOf(form, 'personalPropertyTax')}
@@ -34,19 +37,21 @@ export function ScheduleA({ form, setValue, calculation, onTrace }: ScheduleAPro
         <DerivedLine
           no="5e"
           label="Total taxes (SALT cap applied)"
-          value={derived.saltDeduction ?? null}
-          nodeId="scheduleA:saltDeduction"
+          value={derived.salt ?? null}
+          nodeId="scheduleA:salt"
           onTrace={onTrace}
         />
       </FormSection>
 
       <FormSection title="Interest & medical">
         <MoneyLine
+          fieldId="medical"
           label="Medical and dental expenses"
           value={centsOf(form, 'medical')}
           onCommit={(v) => setValue('medical', v)}
         />
         <MoneyLine
+          fieldId="mortgageInterest"
           no="8a"
           label="Home mortgage interest"
           value={centsOf(form, 'mortgageInterest')}
@@ -56,12 +61,14 @@ export function ScheduleA({ form, setValue, calculation, onTrace }: ScheduleAPro
 
       <FormSection title="Gifts to charity">
         <MoneyLine
+          fieldId="charitableCash"
           no="11"
           label="By cash or check"
           value={centsOf(form, 'charitableCash')}
           onCommit={(v) => setValue('charitableCash', v)}
         />
         <MoneyLine
+          fieldId="charitableNonCash"
           no="12"
           label="Other than by cash or check"
           value={centsOf(form, 'charitableNonCash')}

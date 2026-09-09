@@ -738,7 +738,43 @@ export function moneyDelta(
 
 export function formatOutcome(refundOrDue: number, exact: boolean): string {
   if (!exact) return 'Incomplete'
+  if (refundOrDue === 0) return '$0'
   const amount = money.format(Math.abs(refundOrDue))
-  if (refundOrDue >= 0) return `Refund ${amount}`
+  if (refundOrDue > 0) return `Refund ${amount}`
   return `Due ${amount}`
+}
+
+/**
+ * Tax-semantic description of how refund/due changed vs baseline.
+ * `refundOrDue` is positive for refund, negative for amount due.
+ */
+export function formatOutcomeDelta(
+  baselineRefundOrDue: number,
+  currentRefundOrDue: number,
+): string | null {
+  if (baselineRefundOrDue === currentRefundOrDue) return null
+
+  const amount = (cents: number) => money.format(Math.abs(cents))
+
+  const baselineSide =
+    baselineRefundOrDue > 0 ? 'refund' : baselineRefundOrDue < 0 ? 'due' : 'zero'
+  const currentSide =
+    currentRefundOrDue > 0 ? 'refund' : currentRefundOrDue < 0 ? 'due' : 'zero'
+
+  if (baselineSide !== currentSide) {
+    if (currentSide === 'refund') return `now a ${amount(currentRefundOrDue)} refund`
+    if (currentSide === 'due') return `now ${amount(currentRefundOrDue)} due`
+    return 'now $0'
+  }
+
+  if (currentSide === 'due') {
+    const change = Math.abs(currentRefundOrDue) - Math.abs(baselineRefundOrDue)
+    if (change < 0) return `${amount(change)} less due`
+    return `${amount(change)} more due`
+  }
+
+  // Both refunds
+  const change = currentRefundOrDue - baselineRefundOrDue
+  if (change > 0) return `${amount(change)} larger refund`
+  return `${amount(change)} smaller refund`
 }

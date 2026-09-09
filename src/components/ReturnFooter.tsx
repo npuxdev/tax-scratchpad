@@ -23,17 +23,25 @@ export function ReturnFooter() {
           className="footer__incomplete"
           onClick={() => setCoverageDrawerOpen(true)}
         >
-          Projection incomplete
+          Calculation incomplete
         </button>
       )
     }
-    const refund = totals.refundOrDue >= 0
+    const refundOrDue = totals.refundOrDue
+    if (refundOrDue === 0) {
+      return (
+        <span className="footer__headline tabular" aria-live="polite">
+          $0
+        </span>
+      )
+    }
+    const refund = refundOrDue > 0
     return (
       <span
         className={`footer__headline${refund ? ' footer__headline--refund' : ''}`}
       >
         {refund ? 'Refund ' : 'Due '}
-        {money.format(Math.abs(totals.refundOrDue))}
+        {money.format(Math.abs(refundOrDue))}
       </span>
     )
   }
@@ -55,7 +63,7 @@ export function ReturnFooter() {
       <div className="footer__forms">
         <DropdownMenu
           side="top"
-          label={`${formCount} form${formCount === 1 ? '' : 's'}`}
+          label={`${formCount} input form${formCount === 1 ? '' : 's'}`}
           items={formItems}
         />
       </div>

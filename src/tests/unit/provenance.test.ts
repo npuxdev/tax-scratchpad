@@ -35,16 +35,29 @@ describe('calculation graph provenance', () => {
     const { graph, totals } = calculateFederal2025(scenario)
 
     const netNodeId = `scheduleC:${scheduleC.id}:net`
+    const expenseNodeId = `scheduleC:${scheduleC.id}:expenses`
     const netNode = graph.nodes[netNodeId]
     expect(netNode).toBeDefined()
     expect(netNode.value).toBe(money.fromDollars(40_000))
 
-    // Net profit node is wired into total income.
-    expect(graph.nodes['form1040:9'].inputs).toContain(netNodeId)
+    // Schedule 1 line 3 bridges Schedule C into Form 1040.
+    expect(graph.nodes['schedule1:3']).toBeDefined()
+    expect(graph.nodes['schedule1:3'].inputs).toContain(netNodeId)
+    expect(graph.nodes['form1040:9'].inputs).toContain('schedule1:3')
 
     // Net profit node's ancestors include the gross receipts node.
     const ancestorIds = getAncestors(graph, netNodeId).map((n) => n.id)
     expect(ancestorIds).toContain(`scheduleC:${scheduleC.id}:gross`)
+
+    // Full path: expenses → net → Schedule 1 → AGI → taxable → tax → refund/due
+    const dueAncestors = getAncestors(graph, 'form1040:34').map((n) => n.id)
+    expect(dueAncestors).toContain(expenseNodeId)
+    expect(dueAncestors).toContain(netNodeId)
+    expect(dueAncestors).toContain('schedule1:3')
+    expect(dueAncestors).toContain('form1040:9')
+    expect(dueAncestors).toContain('form1040:11')
+    expect(dueAncestors).toContain('form1040:15')
+    expect(dueAncestors).toContain('form1040:line16')
 
     expect(totals.income).toBe(money.fromDollars(40_000))
   })

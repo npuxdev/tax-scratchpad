@@ -30,6 +30,7 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
     <FormFrame title="Schedule C" meta="Profit or Loss From Business · 2025">
       <FormSection>
         <TextLine
+          fieldId="businessName"
           label="Business name"
           value={textOf(form, 'businessName')}
           onCommit={(v) => setValue('businessName', v)}
@@ -38,18 +39,21 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
 
       <FormSection title="Part I · Income">
         <MoneyLine
+          fieldId="otherGrossReceipts"
           no="1"
           label="Other gross receipts (not from 1099-NEC)"
           value={centsOf(form, 'otherGrossReceipts')}
           onCommit={(v) => setValue('otherGrossReceipts', v)}
         />
         <MoneyLine
+          fieldId="returnsAndAllowances"
           no="2"
           label="Returns and allowances"
           value={centsOf(form, 'returnsAndAllowances')}
           onCommit={(v) => setValue('returnsAndAllowances', v)}
         />
         <MoneyLine
+          fieldId="costOfGoodsSold"
           no="4"
           label="Cost of goods sold"
           value={centsOf(form, 'costOfGoodsSold')}
@@ -58,8 +62,8 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
         <DerivedLine
           no="7"
           label="Gross income"
-          value={derived.grossIncome ?? null}
-          nodeId={`scheduleC:${form.id}:grossIncome`}
+          value={derived.grossReceipts ?? null}
+          nodeId={`scheduleC:${form.id}:gross`}
           onTrace={onTrace}
         />
       </FormSection>
@@ -68,17 +72,20 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
         {EXPENSE_FIELDS.map((f) => (
           <MoneyLine
             key={f.id}
+            fieldId={f.id}
             label={f.label}
             value={centsOf(form, f.id)}
             onCommit={(v) => setValue(f.id, v)}
           />
         ))}
         <BooleanLine
+          fieldId="hasDepreciation"
           label="Depreciation / Form 4562 applies"
           value={boolOf(form, 'hasDepreciation')}
           onCommit={(v) => setValue('hasDepreciation', v)}
         />
         <BooleanLine
+          fieldId="hasHomeOffice"
           label="Home office deduction applies"
           value={boolOf(form, 'hasHomeOffice')}
           onCommit={(v) => setValue('hasHomeOffice', v)}
@@ -87,7 +94,7 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
           no="28"
           label="Total expenses"
           value={derived.totalExpenses ?? null}
-          nodeId={`scheduleC:${form.id}:totalExpenses`}
+          nodeId={`scheduleC:${form.id}:expenses`}
           onTrace={onTrace}
         />
       </FormSection>
@@ -97,7 +104,7 @@ export function ScheduleC({ form, setValue, calculation, onTrace }: ScheduleCPro
           no="31"
           label="Net profit or (loss)"
           value={derived.netProfit ?? null}
-          nodeId={`scheduleC:${form.id}:netProfit`}
+          nodeId={`scheduleC:${form.id}:net`}
           onTrace={onTrace}
         />
       </FormSection>

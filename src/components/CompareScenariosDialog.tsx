@@ -19,6 +19,7 @@ import {
   exportComparisonJson,
   formatComparisonValue,
   formatOutcome,
+  formatOutcomeDelta,
   moneyDelta,
 } from '../comparison/compare'
 import type { ComparisonRow, ScenarioComparisonDocument } from '../comparison/types'
@@ -173,10 +174,13 @@ function ComparisonView({
         {scenarios.map((scenario, index) => {
           const exact = scenario.coverage === 'exact'
           const baseline = scenarios[0]!
-          const delta =
+          const deltaPhrase =
             index === 0 || !exact || baseline.coverage !== 'exact'
               ? null
-              : scenario.totals.refundOrDue - baseline.totals.refundOrDue
+              : formatOutcomeDelta(
+                  baseline.totals.refundOrDue,
+                  scenario.totals.refundOrDue,
+                )
           return (
             <article
               key={scenario.id}
@@ -189,13 +193,13 @@ function ComparisonView({
               <div className="compare__outcome-figure tabular">
                 {formatOutcome(scenario.totals.refundOrDue, exact)}
               </div>
-              {delta !== null && delta !== 0 ? (
-                <div className="compare__outcome-delta tabular">
-                  {money.format(delta, { signed: true })} vs baseline
-                </div>
+              {index === 0 ? (
+                <div className="compare__outcome-delta">Baseline</div>
+              ) : deltaPhrase ? (
+                <div className="compare__outcome-delta tabular">{deltaPhrase}</div>
               ) : (
                 <div className="compare__outcome-delta">
-                  {exact ? 'Projection exact' : 'Projection incomplete'}
+                  {exact ? 'Calculation complete' : 'Calculation incomplete'}
                 </div>
               )}
               <OutcomeBar
@@ -278,7 +282,7 @@ function DiffTable({
               {scenarios.map((scenario, index) => (
                 <th key={scenario.id} scope="col">
                   {scenario.name}
-                  {index === 0 ? ' · Base' : ''}
+                  {index === 0 ? ' · Baseline' : ''}
                 </th>
               ))}
             </tr>

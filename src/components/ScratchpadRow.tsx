@@ -18,9 +18,9 @@ export interface ScratchRow {
 }
 
 const STATUS_LABEL: Record<RowStatus, string> = {
-  counted: 'Counted',
-  noted: 'Noted',
-  blocking: 'Blocks',
+  counted: 'Included',
+  noted: 'Reference only',
+  blocking: 'Unsupported',
 }
 
 interface ScratchpadRowProps {
