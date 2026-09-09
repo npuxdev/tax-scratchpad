@@ -40,4 +40,19 @@ describe('computeOrdinaryTax', () => {
   it('returns zero tax for negative taxable income', () => {
     expect(computeOrdinaryTax(money.fromDollars(-100), 'single').tax).toBe(0)
   })
+
+  it('returns zero tax for $0 taxable income instead of the $0–$50 midpoint row', () => {
+    const statuses: FilingStatus[] = [
+      'single',
+      'married_joint',
+      'married_separate',
+      'head_of_household',
+    ]
+    for (const status of statuses) {
+      const result = computeOrdinaryTax(money.zero, status)
+      expect(result.tax).toBe(0)
+      expect(result.method).toBe('tax-table')
+      expect(result.trace.tableTaxDollars).toBe(0)
+    }
+  })
 })

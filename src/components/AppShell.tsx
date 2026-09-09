@@ -11,6 +11,7 @@ import {
 import { useAppStore, type MainView } from '../state/AppStore'
 import { useUiState } from '../app/UiState'
 import { BASICS_SELECTION } from '../app/packet'
+import { DISCLAIMER, STORAGE_NOTE } from '../app/labels'
 import { ScenarioSwitcher } from './ScenarioSwitcher'
 import { HeaderActions } from './HeaderActions'
 import { ReturnPacket } from './ReturnPacket'
@@ -43,7 +44,12 @@ export function AppShell() {
             ☰
           </Button>
           <span className="app-brand__name">Tax Scratchpad</span>
-          <span className="app-brand__year">2025 · Federal</span>
+          <span className="app-brand__year" title={DISCLAIMER}>
+            2025 · Federal
+          </span>
+          <span className="app-brand__privacy" title={DISCLAIMER}>
+            {STORAGE_NOTE}
+          </span>
         </div>
 
         <div className="app-header__center">

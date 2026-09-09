@@ -15,6 +15,7 @@ import type {
   Preferences,
   TaxScenario,
 } from '../tax/types'
+import { createDemoScenario } from '../fixtures/demo-scenario'
 import {
   createEmptyScenario,
   duplicateScenario as duplicateScenarioModel,
@@ -53,6 +54,7 @@ interface AppStoreValue {
   importScenario: (json: string, regenerateIds?: boolean) => Promise<void>
   exportActiveScenario: () => string | null
   resetActiveScenario: () => Promise<void>
+  loadDemoScenario: () => Promise<void>
 }
 
 const AppStoreContext = createContext<AppStoreValue | null>(null)
@@ -102,12 +104,22 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         getPreferences(),
       ])
       if (cancelled) return
-      setScenarios(loaded)
+
+      let scenarios = loaded
+      if (scenarios.length === 0) {
+        const demo = createDemoScenario()
+        await putScenario(demo)
+        await setPreferences({ lastScenarioId: demo.id })
+        if (cancelled) return
+        scenarios = [demo]
+      }
+
+      setScenarios(scenarios)
       const preferred =
         prefs.lastScenarioId &&
-        loaded.some((s) => s.id === prefs.lastScenarioId)
+        scenarios.some((s) => s.id === prefs.lastScenarioId)
           ? prefs.lastScenarioId
-          : (loaded[0]?.id ?? null)
+          : (scenarios[0]?.id ?? null)
       setActiveScenarioId(preferred)
       setReady(true)
     })().catch((err: unknown) => {
@@ -232,6 +244,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     await putScenario(next)
   }, [activeScenario, updateScenarioInList])
 
+  const loadDemoScenario = useCallback(async () => {
+    const demo = createDemoScenario()
+    await putScenario(demo)
+    setScenarios((prev) => [demo, ...prev])
+    setActiveScenarioId(demo.id)
+    setSelectedFormId(null)
+    setMainView('scratchpad')
+    await rememberActive(demo.id)
+  }, [rememberActive])
+
   const value = useMemo<AppStoreValue>(
     () => ({
       ready,
@@ -251,6 +273,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       importScenario,
       exportActiveScenario,
       resetActiveScenario,
+      loadDemoScenario,
     }),
     [
       ready,
@@ -268,6 +291,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       importScenario,
       exportActiveScenario,
       resetActiveScenario,
+      loadDemoScenario,
     ],
   )
 

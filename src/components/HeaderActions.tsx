@@ -30,6 +30,7 @@ export function HeaderActions() {
     importJson,
     requestDelete,
     requestReset,
+    loadDemo,
     openShortcuts,
   } = useAppActions()
 
@@ -70,6 +71,10 @@ export function HeaderActions() {
             onSelect: importJson,
           },
           { separator: true },
+          {
+            label: 'Reset demo',
+            onSelect: loadDemo,
+          },
           {
             label: <MenuRow id="reset" label="Reset all…" />,
             searchText: 'Reset all',

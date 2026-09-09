@@ -12,7 +12,12 @@ export interface DropdownMenuProps extends VlakDropdownMenuProps {
   side?: DropdownMenuSide
 }
 
-/** Vlak DropdownMenu plus `side="top"` for chrome that sits on the bottom edge. */
+/**
+ * Product-specific Vlak extension: `side="top"` opens the menu upward.
+ * Vlak's DropdownMenu only paints below the trigger. This is not an official
+ * Vlak API or an upstream contribution — it applies a local class used by the
+ * persistent return bar.
+ */
 export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
   function DropdownMenu({ side = 'bottom', className, ...props }, ref) {
     return (

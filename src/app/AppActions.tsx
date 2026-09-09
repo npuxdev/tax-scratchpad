@@ -36,6 +36,7 @@ interface AppActionsValue {
   importJson: () => void
   requestDelete: () => void
   requestReset: () => void
+  loadDemo: () => void
   toggleCommand: () => void
   toggleShortcuts: () => void
   openShortcuts: () => void
@@ -57,6 +58,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
     exportActiveScenario,
     importScenario,
     resetActiveScenario,
+    loadDemoScenario,
   } = useAppStore()
   const {
     setAddFormOpen,
@@ -130,6 +132,11 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
     setConfirmReset(true)
   }, [activeScenario])
 
+  const loadDemo = useCallback(() => {
+    void loadDemoScenario()
+    toast('Loaded demonstration scenario')
+  }, [loadDemoScenario])
+
   const toggleCommand = useCallback(() => {
     if (!activeScenario) return
     setCommandOpen(!commandOpen)
@@ -194,6 +201,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
       importJson,
       requestDelete,
       requestReset,
+      loadDemo,
       toggleCommand,
       toggleShortcuts,
       openShortcuts,
@@ -211,6 +219,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
       importJson,
       requestDelete,
       requestReset,
+      loadDemo,
       toggleCommand,
       toggleShortcuts,
       openShortcuts,

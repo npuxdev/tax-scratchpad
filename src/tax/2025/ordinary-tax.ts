@@ -35,6 +35,7 @@ export interface OrdinaryTaxResult {
 
 /**
  * Compute 2025 ordinary income tax on taxable income.
+ * - Zero or less: Form 1040 line 16 is -0- (do not use the $0–$50 table midpoint)
  * - Under $100,000: IRS Tax Table (midpoint method precomputed)
  * - $100,000+: Tax Computation Worksheet via continuous brackets
  *
@@ -46,6 +47,20 @@ export function computeOrdinaryTax(
 ): OrdinaryTaxResult {
   const wholeDollarCents = money.roundIRS(taxableIncomeCents);
   const taxableIncomeDollars = wholeDollarCents / 100;
+
+  if (wholeDollarCents <= 0) {
+    return {
+      tax: money.zero,
+      method: "tax-table",
+      trace: {
+        taxableIncomeCents: money.max(money.zero, wholeDollarCents),
+        taxableIncomeDollars: 0,
+        filingStatus,
+        method: "tax-table",
+        tableTaxDollars: 0,
+      },
+    };
+  }
 
   if (wholeDollarCents < TAX_TABLE_MAX_EXCLUSIVE) {
     const tableTaxDollars = lookupTaxTable(taxableIncomeDollars, filingStatus);

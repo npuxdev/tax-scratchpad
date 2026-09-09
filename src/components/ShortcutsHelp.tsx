@@ -11,6 +11,7 @@ import {
   isApplePlatform,
   type Shortcut,
 } from '../app/hotkeys'
+import { DISCLAIMER, STORAGE_NOTE } from '../app/labels'
 import { HotkeyKeys } from './HotkeyKeys'
 
 interface ShortcutsHelpProps {
@@ -81,6 +82,9 @@ export function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
           <p className="shortcuts__foot">
             <HotkeyKeys id="shortcuts-alt" /> also opens this guide while
             typing. Esc closes.
+          </p>
+          <p className="disclaimer">
+            {STORAGE_NOTE} {DISCLAIMER}
           </p>
         </div>
       </DialogBody>

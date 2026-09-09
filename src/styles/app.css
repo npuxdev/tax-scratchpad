@@ -78,6 +78,11 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.app-brand__privacy {
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+}
+
 .app-header__center {
   display: flex;
   align-items: center;
@@ -224,8 +229,7 @@ body {
   padding: 10px 14px 6px;
   font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
   color: var(--text-secondary);
 }
 
@@ -385,8 +389,6 @@ body {
   justify-self: end;
   text-align: right;
   font-size: 0.625rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--text-secondary);
 }
 
@@ -1095,6 +1097,10 @@ body {
 
   .app-header__center .scenario-switcher-name {
     max-width: 40vw;
+  }
+
+  .app-brand__privacy {
+    display: none;
   }
 
   .footer__stats {

@@ -28,6 +28,7 @@ export function CommandPalette() {
     importJson,
     requestDelete,
     requestReset,
+    loadDemo,
     openShortcuts,
   } = useAppActions()
 
@@ -126,6 +127,11 @@ export function CommandPalette() {
           onSelect: () => run(importJson),
         },
         {
+          label: 'Reset demo',
+          keywords: 'baseline demonstration fixture',
+          onSelect: () => run(loadDemo),
+        },
+        {
           label: 'Reset all…',
           keywords: 'clear wipe',
           hint: <Hint id="reset" />,
@@ -158,6 +164,7 @@ export function CommandPalette() {
     goForm,
     goScratchpad,
     importJson,
+    loadDemo,
     openShortcuts,
     requestDelete,
     requestReset,

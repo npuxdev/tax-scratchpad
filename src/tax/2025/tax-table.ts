@@ -37,7 +37,9 @@ export function lookupTaxTable(
   taxableIncomeDollars: number,
   filingStatus: FilingStatus,
 ): number {
-  if (taxableIncomeDollars < 0) return 0;
+  // Form 1040 instructions: if line 15 is zero or less, enter -0- on line 16.
+  // Do not use the $0–$50 midpoint row (which is $3) for zero taxable income.
+  if (taxableIncomeDollars <= 0) return 0;
   if (taxableIncomeDollars >= 100_000) {
     throw new RangeError(
       "lookupTaxTable is only valid for taxable income under $100,000; use computeTaxFromBrackets",
