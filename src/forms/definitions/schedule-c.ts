@@ -1,0 +1,127 @@
+import type { FormDefinition } from '../../tax/types'
+
+export const scheduleCDefinition: FormDefinition = {
+  type: 'SCHEDULE_C',
+  title: 'Profit or Loss From Business',
+  formNumber: 'Schedule C',
+  taxYear: 2025,
+  fields: [
+    {
+      id: 'businessName',
+      label: 'Business name',
+      dataType: 'text',
+      calculationUse: 'informational',
+    },
+    {
+      id: 'otherGrossReceipts',
+      label: 'Other gross receipts (not from 1099-NEC)',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['SCHEDULE_C.1'],
+    },
+    {
+      id: 'returnsAndAllowances',
+      label: 'Returns and allowances',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['SCHEDULE_C.2'],
+    },
+    {
+      id: 'costOfGoodsSold',
+      label: 'Cost of goods sold',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['SCHEDULE_C.4'],
+    },
+    {
+      id: 'advertising',
+      label: 'Advertising',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'carAndTruck',
+      label: 'Car and truck expenses',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'commissions',
+      label: 'Commissions and fees',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'contractLabor',
+      label: 'Contract labor',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'insurance',
+      label: 'Insurance (other than health)',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'legal',
+      label: 'Legal and professional services',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'office',
+      label: 'Office expense',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'supplies',
+      label: 'Supplies',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'travel',
+      label: 'Travel',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'utilities',
+      label: 'Utilities',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'wages',
+      label: 'Wages',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'otherExpenses',
+      label: 'Other expenses',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'businessMeals',
+      label: 'Business meals (50% deductible)',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'hasDepreciation',
+      label: 'Depreciation / Form 4562 applies',
+      dataType: 'boolean',
+      calculationUse: 'unsupported-trigger',
+    },
+    {
+      id: 'hasHomeOffice',
+      label: 'Home office deduction applies',
+      dataType: 'boolean',
+      calculationUse: 'unsupported-trigger',
+    },
+  ],
+}

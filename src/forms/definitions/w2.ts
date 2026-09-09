@@ -1,0 +1,82 @@
+import type { FormDefinition } from '../../tax/types'
+
+export const w2Definition: FormDefinition = {
+  type: 'W2',
+  title: 'Wage and Tax Statement',
+  formNumber: 'W-2',
+  taxYear: 2025,
+  fields: [
+    {
+      id: 'employerName',
+      label: 'Employer name',
+      dataType: 'text',
+      calculationUse: 'informational',
+    },
+    {
+      id: 'box1',
+      box: '1',
+      label: 'Wages, tips, other compensation',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['1040.1a'],
+    },
+    {
+      id: 'box2',
+      box: '2',
+      label: 'Federal income tax withheld',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['1040.25a'],
+    },
+    {
+      id: 'box3',
+      box: '3',
+      label: 'Social Security wages',
+      dataType: 'money',
+      calculationUse: 'supported',
+      mapsTo: ['SE'],
+    },
+    {
+      id: 'box4',
+      box: '4',
+      label: 'Social Security tax withheld',
+      dataType: 'money',
+      calculationUse: 'informational',
+    },
+    {
+      id: 'box5',
+      box: '5',
+      label: 'Medicare wages and tips',
+      dataType: 'money',
+      calculationUse: 'supported',
+    },
+    {
+      id: 'box6',
+      box: '6',
+      label: 'Medicare tax withheld',
+      dataType: 'money',
+      calculationUse: 'informational',
+    },
+    {
+      id: 'box10',
+      box: '10',
+      label: 'Dependent care benefits',
+      dataType: 'money',
+      calculationUse: 'unsupported-trigger',
+    },
+    {
+      id: 'box11',
+      box: '11',
+      label: 'Nonqualified plans',
+      dataType: 'money',
+      calculationUse: 'informational',
+    },
+    {
+      id: 'box12',
+      box: '12',
+      label: 'Box 12 codes (informational in v0)',
+      dataType: 'text',
+      calculationUse: 'informational',
+    },
+  ],
+}
