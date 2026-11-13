@@ -57,7 +57,8 @@ This app has no client-side URL router. Do not add a custom `404.html` or a catc
 - IndexedDB persists scenarios after refresh
 - Browser network log shows no tax/scenario data leaving the origin
 - Command palette (`⌘/Ctrl+K`) works
-- Keyboard shortcuts work (`?`, `G` then `S`/`F`/`B`, `N`, `D`, `C`) and do not fire while typing in a field
+- Keyboard shortcuts work (`?`, `⇧D` appearance, `G` then `S`/`F`/`B`, `N`, `D`, `C`) and do not fire while typing in a field
+- Appearance defaults to dark and `⇧D` toggles light; the choice survives refresh
 - Forms drop-up on the return bar opens upward, stays in viewport, and dismisses with Escape / outside click
 - Scenario duplication works
 - Compare works

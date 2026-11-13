@@ -36,6 +36,7 @@ export function CommandPalette() {
     requestReset,
     loadDemo,
     openShortcuts,
+    toggleTheme,
   } = useAppActions()
 
   const groups = useMemo<CommandGroup[]>(() => {
@@ -159,6 +160,12 @@ export function CommandPalette() {
           onSelect: () => run(requestDelete),
         },
         {
+          label: 'Toggle appearance',
+          keywords: 'dark light theme appearance mode',
+          hint: <Hint id="toggle-theme" />,
+          onSelect: () => run(toggleTheme),
+        },
+        {
           label: 'Keyboard shortcuts',
           keywords: 'help ?',
           hint: <Hint id="shortcuts" />,
@@ -188,6 +195,7 @@ export function CommandPalette() {
     setCommandOpen,
     setMainView,
     setSelectedFormId,
+    toggleTheme,
     toggleView,
   ])
 

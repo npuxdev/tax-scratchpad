@@ -50,6 +50,7 @@ export type ShortcutId =
   | 'command'
   | 'shortcuts'
   | 'shortcuts-alt'
+  | 'toggle-theme'
   | 'add-form'
   | 'toggle-view'
   | 'go-scratchpad'
@@ -101,6 +102,14 @@ export const SHORTCUTS: Shortcut[] = [
     description: 'Open this reference, even while typing',
     sequence: [{ key: '/', meta: true }],
     allowInInput: true,
+    allowInDialog: true,
+  },
+  {
+    id: 'toggle-theme',
+    group: 'general',
+    label: 'Toggle appearance',
+    description: 'Switch between dark and light',
+    sequence: [{ key: 'd', shift: true }],
     allowInDialog: true,
   },
   {

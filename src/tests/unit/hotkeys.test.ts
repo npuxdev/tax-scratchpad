@@ -35,6 +35,7 @@ describe('hotkey catalog', () => {
       expect.arrayContaining([
         'command',
         'shortcuts',
+        'toggle-theme',
         'add-form',
         'toggle-view',
         'go-basics',
@@ -91,6 +92,17 @@ describe('combo matching', () => {
     expect(comboMatchesEvent(reset, key('r', { metaKey: true }))).toBe(false)
     expect(comboMatchesEvent(reset, key('R', { shiftKey: true }))).toBe(false)
   })
+
+  it('matches appearance as Shift+D without stealing Duplicate', () => {
+    const appearance = getShortcut('toggle-theme').sequence[0]
+    expect(comboMatchesEvent(appearance, key('d', { shiftKey: true }))).toBe(true)
+    expect(comboMatchesEvent(appearance, key('D', { shiftKey: true }))).toBe(true)
+    expect(comboMatchesEvent(appearance, key('d'))).toBe(false)
+
+    const duplicate = getShortcut('duplicate').sequence[0]
+    expect(comboMatchesEvent(duplicate, key('d'))).toBe(true)
+    expect(comboMatchesEvent(duplicate, key('d', { shiftKey: true }))).toBe(false)
+  })
 })
 
 describe('sequences', () => {
@@ -121,6 +133,10 @@ describe('formatting', () => {
       'G then B',
     )
     expect(formatSequence(getShortcut('reset').sequence, true)).toBe('R')
+    expect(formatSequence(getShortcut('toggle-theme').sequence, true)).toBe('⇧D')
+    expect(formatSequence(getShortcut('toggle-theme').sequence, false)).toBe(
+      'Shift+D',
+    )
   })
 
   it('detects Apple platforms from the user agent', () => {

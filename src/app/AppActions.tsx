@@ -18,6 +18,7 @@ import {
 import { useAppStore } from '../state/AppStore'
 import { useUiState } from './UiState'
 import { useHotkeys, type ChordState } from './useHotkeys'
+import { useTheme } from './useTheme'
 import { BASICS_SELECTION } from './packet'
 import { downloadJsonFile, readImportedFile, scenarioDownloadName } from './scenarioIo'
 import { shortcutCaption } from './hotkeys'
@@ -40,6 +41,7 @@ interface AppActionsValue {
   toggleCommand: () => void
   toggleShortcuts: () => void
   openShortcuts: () => void
+  toggleTheme: () => void
   shortcutTitle: typeof shortcutCaption
 }
 
@@ -72,6 +74,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const { toggleTheme } = useTheme()
 
   const addForm = useCallback(() => {
     if (!activeScenario) return
@@ -185,6 +188,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
       import: importJson,
       delete: requestDelete,
       reset: requestReset,
+      'toggle-theme': toggleTheme,
     },
   })
 
@@ -205,6 +209,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
       toggleCommand,
       toggleShortcuts,
       openShortcuts,
+      toggleTheme,
       shortcutTitle: shortcutCaption,
     }),
     [
@@ -223,6 +228,7 @@ export function AppActionsProvider({ children }: { children: ReactNode }) {
       toggleCommand,
       toggleShortcuts,
       openShortcuts,
+      toggleTheme,
     ],
   )
 
